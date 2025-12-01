@@ -1,5 +1,6 @@
 module Main (main) where
 
+import qualified Day00
 import qualified Day01
 import qualified Day02
 import qualified Day03
@@ -17,7 +18,7 @@ import           System.Environment (getArgs)
 
 solvers :: [FilePath -> IO ()]
 solvers =
-    [ Day01.solve
+    [ Day00.solve
     , Day01.solve
     , Day02.solve
     , Day03.solve

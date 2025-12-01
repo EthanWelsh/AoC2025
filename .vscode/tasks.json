@@ -1,24 +1,38 @@
 {
-  "version": "2.0.0",
-  "presentation": {
-    "reveal": "always",
-    "panel": "new"
-  },
-  "tasks": [
-    {
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "label": "stack build",
-      "type": "shell",
-      "command": "stack build"
-    },
-    {
-      "group": "build",
-      "type": "shell",
-      "label": "stack clean",
-      "command": "stack clean"
-    }
-  ]
+	"version": "2.0.0",
+	"presentation": {
+		"reveal": "always",
+		"panel": "new"
+	},
+	"tasks": [
+		{
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"label": "stack build",
+			"type": "shell",
+			"command": "stack build"
+		},
+		{
+			"group": "build",
+			"type": "shell",
+			"label": "stack clean",
+			"command": "stack clean"
+		},
+		{
+			"label": "hlint (src + test)",
+			"type": "shell",
+			"command": "hlint",
+			"args": [
+				"src",
+				"test"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$hlint - stylish"
+			],
+			"group": "build"
+		}
+	]
 }

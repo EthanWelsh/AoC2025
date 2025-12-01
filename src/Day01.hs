@@ -1,30 +1,19 @@
 module Day01 (solve) where
 
-import Text.Megaparsec
-import           Utils.Parsers (Parser)
---import Control.Monad (void)
---import Text.Megaparsec.Char (string, char, newline)
-
 type Input = String
 
-parseInput :: Parser Input
-parseInput = error "TODO"
+parseInput :: String -> Input
+parseInput = id
 
-part1 :: Input -> IO ()
-part1 input = do
-  putStr "Part 1: "
-  print input
+part1 :: Input -> String
+part1 input = "Not implemented"
 
-part2 :: Input -> IO ()
-part2 input = do
-  putStr "Part 2: "
-  print input
+part2 :: Input -> String
+part2 input = "Not implemented"
 
 solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
-  case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+  let input = parseInput contents
+  putStrLn $ "Part 1: " ++ part1 input
+  putStrLn $ "Part 2: " ++ part2 input

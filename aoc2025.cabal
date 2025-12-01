@@ -16,6 +16,7 @@ executable aoc2025
   hs-source-dirs:      src
   main-is:             Main.hs
   other-modules:       Utils.Parsers
+                     , Day00
                      , Day01
                      , Day02
                      , Day03
@@ -64,3 +65,18 @@ executable aoc2025
                        -Wmissing-home-modules
                        -Wpartial-fields
                        -Wredundant-constraints
+
+test-suite aoc2025-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test src
+  main-is:             Spec.hs
+  other-modules:       Day00Spec
+                     , Day01Spec
+  build-depends:       base >= 4.7 && < 5
+                     , hspec >= 2.10 && < 3
+                     , QuickCheck >= 2.14
+                     , containers
+                     , megaparsec
+                     , memoize
+  default-language:    Haskell2010
+  ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N

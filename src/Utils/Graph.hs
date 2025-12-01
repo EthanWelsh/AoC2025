@@ -29,6 +29,7 @@ makeBidirectional :: Ord a => Graph a -> Graph a
 makeBidirectional g = let
   allEdges = edges g ++ map swap (edges g)
   in graphFromEdges allEdges
+
 -- | Return all edges in the graph as pairs (src, dst).
 edges :: Graph a -> [(a, a)]
 edges g = concatMap flatten (M.toList (graphAsMap g))
