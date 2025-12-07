@@ -1,24 +1,65 @@
 module Day02 (solve) where
 
 import Text.Megaparsec
-import           Utils.Parsers (Parser)
---import Control.Monad (void)
---import Text.Megaparsec.Char (string, char, newline)
+import           Utils.Parsers (Parser, integer)
+import Text.Megaparsec.Char (char)
+import Data.List.Split (chunksOf)
 
-type Input = String
+type Input = [Range]
+type Range = (Int, Int)
 
 parseInput :: Parser Input
-parseInput = error "TODO"
+parseInput = parseRange `sepBy` (char ','  )
+
+parseRange :: Parser Range
+parseRange = do
+  open <- integer
+  _ <- char '-'
+  close <- integer
+  return (open, close)
+
+numsInRange :: Range -> [Int]
+numsInRange (start, close) = [start..close]
+
+splitInHalf :: [a] -> ([a], [a])
+splitInHalf xs = splitAt (length xs `div` 2) xs
+
+isInvalid :: Int -> Bool
+isInvalid x = let
+  n = show x
+  (a, b) = splitInHalf n
+  in a == b
+
+allNums :: [Range] -> [Int]
+allNums rs = concatMap numsInRange rs
 
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
-  print input
+  let invalidNums = filter isInvalid (allNums input)
+  print $ sum invalidNums
+
+-- [1234] --> [["12", "34"], ["1", "2", "3", "4"]]
+allEqualSizedChunks :: [a] -> [[[a]]]
+allEqualSizedChunks xs = let
+  n = length xs
+  possibleChunkSizes = filter (\x -> n `mod` x == 0) [1 .. n `div` 2]
+  in map (\c -> chunksOf c xs) possibleChunkSizes
+
+chunkInvalid :: Eq a => [[a]] -> Bool
+chunkInvalid chunks = all (== head chunks) (tail chunks)
+
+isInvalid2 :: Int -> Bool
+isInvalid2 x = let
+  n = show x
+  possibleChunkSizes = allEqualSizedChunks n
+  in any chunkInvalid possibleChunkSizes
 
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "
-  print input
+  let invalidNums = filter isInvalid2 (allNums input)
+  print $ sum invalidNums
 
 solve :: FilePath -> IO ()
 solve filePath = do

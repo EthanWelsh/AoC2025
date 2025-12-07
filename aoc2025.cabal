@@ -40,6 +40,7 @@ executable aoc2025
                      , containers
                      , vector-algorithms
                      , vector
+                     , split
                      , data-interval
                      , hashmap
                      , lens
