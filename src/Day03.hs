@@ -1,24 +1,41 @@
-module Day03 (solve) where
+module Day03 (solve, parseInput) where
 
-import Text.Megaparsec
-import           Utils.Parsers (Parser)
---import Control.Monad (void)
---import Text.Megaparsec.Char (string, char, newline)
+import Text.Megaparsec (parse, errorBundlePretty, some, optional, sepBy)
+import Text.Megaparsec.Char (digitChar, eol)
+import Utils.Parsers (Parser)
 
-type Input = String
+type Bank = [Int]
+type Input = [Bank]
+
+charsToInts :: [Char] -> [Int]
+charsToInts cs = map (\c -> read [c]) cs
 
 parseInput :: Parser Input
-parseInput = error "TODO"
+parseInput = do
+  lines <- (some digitChar) `sepBy` eol
+  return $ map charsToInts lines
+
+-- Remove the last element in the list.
+dropLast :: [a] -> [a]
+dropLast [x] = []
+dropLast (x:xs) = x : (dropLast xs)
+
+highestVoltage :: Bank -> Int
+highestVoltage bank = let
+  a = maximum (dropLast bank)
+  b = maximum $ tail $ dropWhile (/= a) bank
+  in (a * 10) + b
 
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
-  print input
+  let voltages = map highestVoltage input
+  print $ sum voltages
 
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "
-  print input
+  --print $ sum (map length input)
 
 solve :: FilePath -> IO ()
 solve filePath = do
