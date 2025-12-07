@@ -17,8 +17,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver:
-  url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/21/22.yaml
+resolver: lts-22.44
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -66,7 +65,4 @@ packages:
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor
 extra-deps:
-  # - ghc-lib-parser-9.6.3.20231121@sha256:49f1a2f330c6f40dcf848988baf3c1266da04267b59e36755de473944b440a0e,15831
-  - ghc-lib-parser-ex-9.6.0.2@sha256:73fbe5a9817767f2a417c5adfc734f02d0e842ca86fe68bb75a10b5ebbce1741,3493
-  - ghc-lib-parser-9.4.8.20231111@sha256:fbbc68e9a30d97321a0cb576d7366b732b98136f4a5e5a9384ed13ff1b00a7db,14591
   - memoize-1.1.2@sha256:d7701b55ed63434d1e8b507d0a76bb58f2fe31b7ce329132e1ca808c7001da49,1928

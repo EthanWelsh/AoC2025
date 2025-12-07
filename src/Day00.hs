@@ -39,10 +39,7 @@ wireP :: Parser Wire
 wireP = some (lowerChar <|> digitChar)
 
 bitP :: Parser Int
-bitP = (
-    (0 <$ char '0') <|>
-    (1 <$ char '1')
-  )
+bitP = (0 <$ char '0') <|> (1 <$ char '1')
 
 assignmentP :: Parser (Wire, Int)
 assignmentP = do
@@ -127,7 +124,7 @@ intToBits n
             in bit : go (k `shiftR` 1)
 
 part1 :: Input -> Int
-part1 input = let 
+part1 input = let
   gs = allOutputGates input
   vs = reverse $ map (evaluate input) gs
   in bitsToInt vs
@@ -146,33 +143,33 @@ part1 input = let
 
 -- Find swapped wires by checking adder structure bit by bit
 findSwappedWires :: Input -> [Wire]
-findSwappedWires input = 
+findSwappedWires input =
   let allGates = M.elems (gates input)
-      
+
       -- Rule 1: If output starts with 'z' and it's not the last bit, it must be XOR
       maxZ = maximum [read (drop 1 w) :: Int | w <- M.keys (gates input), head w == 'z']
       finalZ = "z" ++ (if maxZ < 10 then "0" else "") ++ show maxZ
-      
+
       wrongZ = [output g | g <- allGates,
                 head (output g) == 'z',
                 output g /= "z00",
                 output g /= finalZ,
                 gateType g /= XOR]
-      
+
       -- Rule 2: If XOR gate doesn't have x,y inputs and doesn't output to z, it's wrong
       wrongXOR = [output g | g <- allGates,
                   gateType g == XOR,
                   head (left g) `notElem` ['x', 'y'],
                   head (right g) `notElem` ['x', 'y'],
                   head (output g) /= 'z']
-      
+
       -- Rule 3: If AND gate has x,y inputs (except x00,y00) and feeds into XOR, it's wrong
       wrongAND = [output g | g <- allGates,
                   gateType g == AND,
                   left g /= "x00" && right g /= "x00",
                   let out = output g,
                   any (\g2 -> (left g2 == out || right g2 == out) && gateType g2 == XOR) allGates]
-      
+
       -- Rule 4: If XOR gate has x,y inputs (except x00,y00) and doesn't feed into XOR, it's wrong
       wrongInputXOR = [output g | g <- allGates,
                        gateType g == XOR,
@@ -181,11 +178,11 @@ findSwappedWires input =
                        left g /= "x00" && right g /= "x00",
                        let out = output g,
                        not (any (\g2 -> (left g2 == out || right g2 == out) && gateType g2 == XOR) allGates)]
-      
+
   in S.toList $ S.fromList (wrongZ ++ wrongXOR ++ wrongAND ++ wrongInputXOR)
 
 part2 :: Input -> String
-part2 input = 
+part2 input =
   let swapped = findSwappedWires input
   in intercalate "," (sort swapped)
 
