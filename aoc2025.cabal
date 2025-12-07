@@ -32,6 +32,7 @@ executable aoc2025
                      , Utils.Graph
                      , Utils.Maze
                      , Utils.Search
+                     , Utils.Range
   default-language:    Haskell2010
   default-extensions:  TupleSections
   build-depends:       base >= 4.7 && < 5
