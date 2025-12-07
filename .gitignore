@@ -26,3 +26,4 @@ input.txt
 .DS_Store
 .idea/
 _templates/
+.vscode/
