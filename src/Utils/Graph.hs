@@ -14,7 +14,9 @@ module Utils.Graph (
   nodes,
   reachable,
   connectedComponents,
-  makeBidirectional
+  makeBidirectional,
+  addBidirectionalEdge,
+  addBidirectionalEdges
 ) where
 
 import           Data.List       ((\\))
@@ -66,8 +68,20 @@ graphFromMap = Graph
 addEdge :: Ord a => Graph a -> a -> a -> Graph a
 addEdge g src dst = apply (M.insertWith (++) src [dst]) g
 
+-- | Add multiple directed edges to the graph.
 addEdges :: Ord a => Graph a -> [(a, a)] -> Graph a
 addEdges = foldr (\(src, dst) g -> addEdge g src dst)
+
+-- | Add bidirectional edge (both directions) to the graph.
+addBidirectionalEdge :: Ord a => Graph a -> (a, a) -> Graph a
+addBidirectionalEdge g (a, b) = let
+  g1 = addEdge g a b
+  g2 = addEdge g1 b a
+  in g2
+
+-- | Add multiple bidirectional edges to the graph.
+addBidirectionalEdges :: Ord a => Graph a -> [(a, a)] -> Graph a
+addBidirectionalEdges = foldr (flip addBidirectionalEdge)
 
 -- | Remove a directed edge (src -> dst) from the graph.
 removeEdge :: Ord a => Graph a -> (a, a) -> Graph a
