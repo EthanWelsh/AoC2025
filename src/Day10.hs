@@ -12,12 +12,12 @@ import Control.Lens (element, (%~), (&))
 
 data Light = On | Off deriving (Show, Eq, Ord)
 newtype WiringSchematic = WiringSchematic [Int] deriving (Show, Eq, Ord)
-newtype JoltageRequirement = JoltageRequirement [Int] deriving (Show, Eq, Ord)
+newtype Joltage = Joltage [Int] deriving (Show, Eq, Ord)
 
 data Machine = Machine
   { targetLights :: [Light]
   , schematics :: [WiringSchematic]
-  , requirements :: JoltageRequirement
+  , requirements :: Joltage
   } deriving (Show, Eq, Ord)
 
 type Input = [Machine]
@@ -41,10 +41,10 @@ parseSchematics = do
   xs <- many (between (symbol "(") (symbol ")") (sepBy integer (symbol ",")))
   return $ map WiringSchematic xs
 
-parseRequirements :: Parser JoltageRequirement
+parseRequirements :: Parser Joltage
 parseRequirements = do
   joltageReqs <- between (symbol "{") (symbol "}") (sepBy integer (symbol ","))
-  return $ JoltageRequirement joltageReqs
+  return $ Joltage joltageReqs
 
 machineParser :: Parser Machine
 machineParser = Machine <$> parseLights <*> parseSchematics <*> parseRequirements
@@ -83,10 +83,48 @@ part1 input = do
   putStr "Part 1: "
   print $ sum $ map solveLights input
 
+increaseJoltage :: Joltage -> WiringSchematic -> Joltage
+increaseJoltage (Joltage ls) (WiringSchematic indices) = Joltage $ foldl increase ls indices
+  where
+    increase :: [Int] -> Int -> [Int]
+    increase xs i = xs & element i %~ (+ 1)
+
+higherThanTarget :: Joltage -> Joltage -> Bool
+higherThanTarget (Joltage current) (Joltage target) = any (uncurry (>)) (zip current target)
+
+solveJoltage :: Machine -> Int
+solveJoltage m = case shortestPath of
+    Just (c, _) -> c
+    Nothing -> error "No solution found"
+  where
+    shortestPath :: Maybe (Int, [Joltage])
+    shortestPath = aStar (neighbors `pruning` check) cost estimatedCostToGoal isGoal initialState
+
+    check :: Joltage -> Bool
+    check j = higherThanTarget j (requirements m)
+
+    neighbors :: Joltage -> [Joltage]
+    neighbors joltage = map (increaseJoltage joltage) (schematics m)
+
+    cost :: Joltage -> Joltage -> Int
+    cost _ _ = 1
+
+    estimatedCostToGoal :: Joltage -> Int
+    estimatedCostToGoal (Joltage current) = sum $ zipWith diff current target
+      where
+        (Joltage target) = requirements m
+        diff a b = max 0 (b - a)
+
+    isGoal :: Joltage -> Bool
+    isGoal joltage = joltage == requirements m
+
+    initialState :: Joltage
+    initialState = Joltage $ replicate (length (targetLights m)) 0
+
 part2 :: Input -> IO ()
-part2 _ = do
+part2 input = do
   putStr "Part 2: "
-  --print input
+  print $ sum $ map solveJoltage input
 
 solve :: FilePath -> IO ()
 solve filePath = do
