@@ -59,8 +59,8 @@ toggleLights ls (WiringSchematic indices) = foldl toggle ls indices
     toggle :: [Light] -> Int -> [Light]
     toggle xs i = xs & element i %~ (\l -> if l == On then Off else On)
 
-solveMachine :: Machine -> Int
-solveMachine m = case shortestPath of
+solveLights :: Machine -> Int
+solveLights m = case shortestPath of
     Just (c, _) -> c
     Nothing -> error "No solution found"
   where
@@ -82,7 +82,7 @@ solveMachine m = case shortestPath of
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
-  print $ sum $ map solveMachine input
+  print $ sum $ map solveLights input
 
 part2 :: Input -> IO ()
 part2 _ = do
