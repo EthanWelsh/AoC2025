@@ -52,7 +52,6 @@ machineParser = Machine <$> parseLights <*> parseSchematics <*> parseRequirement
 parseInput :: Parser Input
 parseInput = sc >> many machineParser
 
-
 toggleLights :: [Light] -> WiringSchematic -> [Light]
 toggleLights ls (WiringSchematic indices) = foldl toggle ls indices
   where
