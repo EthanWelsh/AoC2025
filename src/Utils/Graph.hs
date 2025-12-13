@@ -1,11 +1,13 @@
 module Utils.Graph (
   Graph,
   edges,
+  graphFromNodes,
   graphFromEdges,
   graphAsMap,
   graphFromMap,
   apply,
   addEdge,
+  addEdges,
   removeEdge,
   removeBidirectionalEdge,
   neighbors,
@@ -40,6 +42,10 @@ flatten (a, bs) = map (a,) bs
 unflatten :: Ord a => [(a, b)] -> [(a, [b])]
 unflatten = groupSort
 
+-- | Build a 'Graph' from a list of nodes. Nodes will have no edges.
+graphFromNodes :: Ord a => [a] -> Graph a
+graphFromNodes ns = graphFromMap $ M.fromList $ map (, []) ns
+
 -- | Build a 'Graph' from a list of directed edges.
 graphFromEdges :: Ord a => [(a, a)] -> Graph a
 graphFromEdges es = graphFromMap $ M.fromList $ unflatten es
@@ -59,6 +65,9 @@ graphFromMap = Graph
 -- | Add a directed edge (src -> dst) to the graph.
 addEdge :: Ord a => Graph a -> a -> a -> Graph a
 addEdge g src dst = apply (M.insertWith (++) src [dst]) g
+
+addEdges :: Ord a => Graph a -> [(a, a)] -> Graph a
+addEdges = foldr (\(src, dst) g -> addEdge g src dst)
 
 -- | Remove a directed edge (src -> dst) from the graph.
 removeEdge :: Ord a => Graph a -> (a, a) -> Graph a
@@ -88,7 +97,7 @@ reachable g = helper g empty
       | otherwise = let
         newVisited = insert nn visited
         ns = neighbors gg nn
-        in unions $ map (helper gg newVisited) ns
+        in foldl (helper gg) newVisited ns
 
 -- | Partition the graph into connected components (as sets of nodes).
 connectedComponents :: Ord a => Graph a -> [Set a]
